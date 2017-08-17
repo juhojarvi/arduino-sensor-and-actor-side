@@ -1,11 +1,20 @@
 const int analogInPin0 = A0;  // Analog input pin that the potentiometer is attached to
 const int analogInPin1 = A1;  // Analog input pin that the potentiometer is attached to
 
+#include <Servo.h>
+Servo myservo;
+
+int windowOpen = 50;
+int windowClose = 51;
+
+
 void setup() {
   Serial.begin(9600);
   pinMode(8, OUTPUT);
   pinMode(7, OUTPUT);
   analogReference(INTERNAL);
+  myservo.attach(9);
+  
 }
 
 void loop() {
@@ -13,10 +22,12 @@ void loop() {
   float sensorValue1 = analogRead(analogInPin1);
   int outputValue;
 
+
+
   if (sensorValue1 < 100) //turn on light when the light sensor is covered
   {
-  outputValue = 1; 
-  digitalWrite(8, HIGH);
+    outputValue = 1; 
+    digitalWrite(8, HIGH);
   }
   else
   {
@@ -24,16 +35,30 @@ void loop() {
     digitalWrite(8, LOW);
   }
 
- if (sensorValue0 > 28) //turn on light when temp sensor is above 28C
+ 
+
+ if (sensorValue0 >= 28) //turn on light when temp sensor is above 28C
 {
    
   digitalWrite(7, HIGH);
+  if(myservo.read() != 180)
+  {
+    myservo.write(180);
+    Serial.println("Window has been opened.");
+   }
 }
-else
+
+ if(sensorValue0 < 28)
 {
-  
   digitalWrite(7, LOW);
+  if(myservo.read() != 100)
+  {
+    myservo.write(100);
+    Serial.println("Window has been closed.");
+   }
 }
+
+
 
 
   // Temperature (C)
